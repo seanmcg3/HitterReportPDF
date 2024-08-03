@@ -154,12 +154,12 @@ team_name = "Wareham"
 
 hit_last_name <- str_trim(str_extract(hitter_name, "^[^,]+"))
 
-final = filter(final, Batter == hitter_name)
+filtered = filter(final, Batter == hitter_name)
 
 #Run once
 dir.create(paste0("~/Desktop/Wareham/Scouting/ScoutReports/", team_name), recursive = TRUE)
 
-basic <- final %>%
+basic <- filtered %>%
       group_by(Batter) %>%
       filter(Batter == hitter_name) %>%
       summarize(
@@ -210,7 +210,7 @@ basic <- final %>%
         Batter, PA, AB, H, `1B`, `2B`, `3B`, HR, TB, SO, BB, HBP, AVG, OBP, SLG, OPS
     )
 
-comp_to_lg <- final %>%
+comp_to_lg <- filtered %>%
       group_by(Batter) %>%
       filter(Batter == hitter_name) %>%
       summarize(
@@ -257,7 +257,7 @@ comp_to_lg <- final %>%
     )
 
 
-basicL <- final %>%
+basicL <- filtered %>%
       group_by(Batter) %>%
       filter(Batter == hitter_name, PitcherThrows == "Left") %>%
       summarize(
@@ -308,7 +308,7 @@ basicL <- final %>%
         `Pitcher Hand`, PA, AB, H, `1B`, `2B`, `3B`, HR, TB, SO, BB, HBP, AVG, OBP, SLG, OPS
     )
 
-basicR <- final %>%
+basicR <- filtered %>%
       group_by(Batter) %>%
       filter(Batter == hitter_name, PitcherThrows == "Right") %>%
       summarize(
@@ -360,7 +360,7 @@ basicR <- final %>%
     )
 
 # Filter by the date range
-barrels <- final %>%
+barrels <- filtered %>%
       group_by(Batter) %>%
       filter(Batter == hitter_name) %>%
       summarize(
@@ -413,7 +413,7 @@ barrels <- final %>%
   
 
     
-barrelsL <- final %>%
+barrelsL <- filtered %>%
       group_by(Batter) %>%
       filter(Batter == hitter_name, PitcherThrows == "Left") %>%
       summarize(
@@ -465,7 +465,7 @@ barrelsL <- final %>%
     )
 
   
-barrelsR <- final %>%
+barrelsR <- filtered %>%
       group_by(Batter) %>%
       filter(Batter == hitter_name, PitcherThrows == "Right") %>%
       summarize(
@@ -518,15 +518,15 @@ barrelsR <- final %>%
 
   
 # Create a new variable to indicate "weak" or "good"
-weak <- final %>%
+weak <- filtered %>%
   filter(PitchCall == "StrikeSwinging" | (ExitSpeed < 75 & TaggedHitType != "Bunt")) %>%
   mutate(Category = "Bad")
 
-good <- final %>%
+good <- filtered %>%
   filter(ExitSpeed >= 90 & PitchCall == "InPlay" | PlayResult %in% c('Single', 'Double', 'Triple', 'HomeRun')) %>%
   mutate(Category = "Good")
 
-neutral <- final %>%
+neutral <- filtered %>%
   filter(PitchCall %in% c("FoulBallNotFieldable", "FoulBallFieldable") | (ExitSpeed >= 75 & ExitSpeed < 90)) %>%
   mutate(Category = "Neutral")
 
@@ -641,7 +641,7 @@ pdf(file = paste0("~/Desktop/Wareham/Scouting/ScoutReports/", team_name, "/Hitte
 # Print the annotated figure to the PDF
 print(ann_fig)
 print(outcomes_plot)
-print(spray_chart(final, hitter_name))
+print(spray_chart(filtered, hitter_name))
 # Close the PDF device
 dev.off()
 ```
